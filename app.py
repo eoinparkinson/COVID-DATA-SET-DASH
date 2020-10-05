@@ -20,19 +20,10 @@ df = pd.read_csv("https://raw.githubusercontent.com/eoinparkinson/covid-19-data-
 print(df)
 
 #calculate the mean
-#df_mean = df[["CountyName","ConfirmedCovidCases"]].mean()
+df_mean = df[["CountyName","ConfirmedCovidCases"]].mean()
 
-#opening mapbox token
-token = "pk.eyJ1IjoiZW9pbnBhcmtpbnNvbiIsImEiOiJja2Zzb213MHAwanU0MnFwZGthZjZ1cHljIn0.qX9tz-O9KSxxws35X6LY4Q" # you will need your own token
+fig = px.scatter_mapbox(df, lat= x="CountyName", y="ConfirmedCovidCases", color="CountyName") #,barmode="group"
 
-#color_continuous_scale=px.colors.cyclical.IceFire,
-
-#fig = px.scatter_mapbox(df, lat="Lat", lon="Long", color="CountyName", size="ConfirmedCovidCases", color_continuous_scale=px.colors.cyclical.IceFire, size_max=15, zoom=10, mapbox_style="carto-positron") #,barmode="group"
-
-fig = px.scatter_mapbox(df, lat="Lat", lon="Long", color="CountyName", size="ConfirmedCovidCases", size_max=40, zoom=5.5)
-
-#updating map mapbox_style
-fig.update_layout(mapbox_style="dark", mapbox_accesstoken=token)
 
 app.layout = html.Div(style={
     "backgroundColor": colors["background"]
@@ -52,18 +43,11 @@ app.layout = html.Div(style={
     "color": colors["sub-text"]
     }),
 
-# implementing the graph
-    html.Div(style={"height":"fill"},children=
-        dcc.Graph(
-            id='example-graph',
-            figure=fig,
-            style={
-            "height": "80%"
-            })
-        )
+    dcc.Graph(
+        id='example-graph',
+        figure=fig
+    )
 ])
-
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)
