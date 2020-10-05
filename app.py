@@ -60,7 +60,7 @@ app.layout = html.Div(style={
             id='example-graph',
             figure=fig,
             style={
-            "height": "100%"
+            "height": "900px"
             })
         )
 ])
