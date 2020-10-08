@@ -33,28 +33,39 @@ colors = {
 #reading and ingesting datafile
 df = pd.read_csv("https://raw.githubusercontent.com/eoinparkinson/covid-19-data-raw/master/covid-stats.csv", index_col=0)
 
-#print(df)
-#df.head()
-# cleaning df
-#df_clean = df.pivot_table(values="ConfirmedCovidCases", index="CountyName", aggfunc="mean", margins=True)
+
+# cleaning df -----------------
+
+#stuff to drop
+df_clean = df.groupby("CountyName", as_index=False).agg({"ConfirmedCovidCases": "mean"})
+print(df_clean)
+
+print("\n\n")
+
+print(df_clean.describe())
+
+#df_clean = df.pivot_table(values=["CountyName","ConfirmedCovidCases","Lat","Long"], index="ORIGID",aggfunc="mean", margins=True)
+
+
 #df_clean = df_clean.groupby(["CountyName", "ConfirmedCovidCases"]).mean()
 #print(df_clean)
 
+#    .groupby(df.index()).mean()
 
+#df_clean = df.groupby(level=0).mean()
 
 
 #opening mapbox token
 token = "pk.eyJ1IjoiZW9pbnBhcmtpbnNvbiIsImEiOiJja2Zzb213MHAwanU0MnFwZGthZjZ1cHljIn0.qX9tz-O9KSxxws35X6LY4Q"
 
 # setting up map_graph
-fig = px.scatter_mapbox(df.groupby(df.index()).mean(), lat="Lat", lon="Long", color="CountyName", size="ConfirmedCovidCases",
-                  color_continuous_scale=px.colors.cyclical.IceFire, size_max=40, zoom=5.5)
+#fig = px.scatter_mapbox(df, lat="Lat", lon="Long", color="CountyName", size="ConfirmedCovidCases", color_continuous_scale=px.colors.cyclical.IceFire, size_max=40, zoom=5.5)
 
-#fig = px.bar(df_clean, x="CountyName", y="ConfirmedCovidCases", color="CountyName", barmode="group")
+fig = px.bar(df_clean, x="CountyName", y="ConfirmedCovidCases", color="CountyName", barmode="group")
 
 
 #updating map mapbox_style
-fig.update_layout(mapbox_style="light", mapbox_accesstoken=token)
+#fig.update_layout(mapbox_style="open-street-map", mapbox_accesstoken=token)
 
 #init layout at
 app.layout = html.Div(style={
