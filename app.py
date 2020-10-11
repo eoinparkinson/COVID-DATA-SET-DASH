@@ -13,7 +13,7 @@ token = "pk.eyJ1IjoiZW9pbnBhcmtpbnNvbiIsImEiOiJja2Zzb213MHAwanU0MnFwZGthZjZ1cHlj
 # initialising/defining the flask/dash app
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets,
     meta_tags=[
-        {"name": "viewport", "content": "width=device-width, height=device-height, initial-scale=1"}
+        {"name": "viewport", "content": "width=device-width, height=device-height, initial-scale=1, maximum-scale=1.0, user-scalable=no"}
     ])
 
 # defining some proppa shwanky colours
@@ -46,18 +46,23 @@ map_fig.update_layout(mapbox_style="dark", mapbox_accesstoken=token, paper_bgcol
         pad=1
     ))
 
-#init layout at
+
+
+#init the dash app @/
 app.layout = html.Div(style={
     #setting style of header div
     "backgroundColor": "#1a1a1a",
     "display": "flex",
     "flex-direction": "column",
+    "padding": "7px",
+    "margin": "-10px",
+    "height": "100%",
     },
     # visual header div & title
     children=[
 
 
-    html.H1(children="Ireland Covid-19 Stats",
+    html.H2(children="Ireland Covid-19 Stats",
     style={
         "textAlign": "center",
         "color": colors["text"],
@@ -117,12 +122,11 @@ app.layout = html.Div(style={
 
 
 # implementing the graph
-    html.Div(style={"backgroundColor":"#1a1a1a"},children=
+    html.Div(style={"backgroundColor":"#1a1a1a", "height":"fit"},children=
         dcc.Graph(
             id='example-graph',
             figure=map_fig,
             style={
-            "height": "800px",
             "backgroundColor": "#1a1a1a",
             })
         )
