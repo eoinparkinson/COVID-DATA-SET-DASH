@@ -56,7 +56,6 @@ app.layout = html.Div(style={
     "flex-direction": "column",
     "padding": "7px",
     "margin": "-10px",
-    "height": "100%",
     },
     # visual header div & title
     children=[
