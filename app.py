@@ -3,6 +3,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.express as px
 import pandas as pd
+from dash.dependencies import Input, Output
 
 #external stylesheet for plotly dash
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -34,9 +35,12 @@ print(df_clean)
 print(df_clean.describe())
 
 
+# setting map temp variable
+
+tempGraph = map_fig
+
 # setting up map_fig
 map_fig = px.scatter_mapbox(df_clean.round({"ConfirmedCovidCases":0}), lat="Lat", lon="Long", color="CountyName", size="ConfirmedCovidCases", color_continuous_scale=px.colors.cyclical.IceFire, size_max=40, zoom=5.5)
-
 #updating map mapbox_style
 map_fig.update_layout(mapbox_style="dark", mapbox_accesstoken=token, paper_bgcolor="#1a1a1a", font=dict(color="white"), showlegend=False, margin=dict(
         l=0,
@@ -45,6 +49,9 @@ map_fig.update_layout(mapbox_style="dark", mapbox_accesstoken=token, paper_bgcol
         t=0,
         pad=1
     ))
+
+
+bar_fig = px.bar(df_clean.round({"ConfirmedCovidCases":0}), x="CountyName", y="ConfirmedCovidCases", color="CountyName")
 
 
 
@@ -98,6 +105,7 @@ app.layout = html.Div(style={
         html.Div(children=[
             html.Label('Graph Type', style={"color":"#ffffff"}),
             dcc.Dropdown(
+                id="graph-type",
                 options=[
                     {'label': 'Country Map', 'value': 'country-map'},
                     {'label': 'Bar Chart', 'value': 'bar-chart'},
@@ -125,13 +133,26 @@ app.layout = html.Div(style={
     html.Div(style={"backgroundColor":"#1a1a1a", "height":"100%"},children=
         dcc.Graph(
             id='example-graph',
-            figure=map_fig,
+            figure=mtempGraph,
             style={
             "backgroundColor": "#1a1a1a",
             "height": "100%",
             })
         )
 ])
+
+
+@app.callback(
+    Output(component_id="example-graph", component_property="figure"),
+    [Input(component_id="graph-type", component_property="value")]
+)
+
+
+def changeGraphType(graphType):
+    if graphType == "country-map":
+        tempGraph=map_fig
+    elif graphType == "bar-chart":
+        tempGraph=bar_fig
 
 
 
