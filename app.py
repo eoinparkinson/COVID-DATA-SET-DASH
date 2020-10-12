@@ -54,14 +54,9 @@ app.layout = html.Div(style={
     "backgroundColor": "#1a1a1a",
     "display": "flex",
     "flex-direction": "column",
-<<<<<<< HEAD
     "padding": "0px",
     "margin": "-8px",
     "height": "calc( 100vh - 8px )",
-=======
-    "padding": "7px",
-    "margin": "-10px",
->>>>>>> 34daf4dd013d4e837bffb9f8921269121f2f31e8
     },
     # visual header div & title
     children=[
@@ -127,7 +122,7 @@ app.layout = html.Div(style={
 
 
 # implementing the graph
-    html.Div(style={"backgroundColor":"#1a1a1a"},children=
+    html.Div(style={"backgroundColor":"#1a1a1a", "height":"100%"},children=
         dcc.Graph(
             id='example-graph',
             figure=map_fig,
