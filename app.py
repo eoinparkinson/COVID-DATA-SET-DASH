@@ -28,26 +28,20 @@ colors = {
 df = pd.read_csv("https://raw.githubusercontent.com/eoinparkinson/covid-19-data-raw/master/covid-stats.csv", index_col=0)
 
 # i cleaning df
-df_clean = df.groupby("CountyName", as_index=False).agg({"ConfirmedCovidCases": "mean", "Lat": "mean", "Long": "mean"})
-df_clean = df_clean.round({"ConfirmedCovidCases":0})
-print(df_clean)
+df_clean_mean = df.groupby("CountyName", as_index=False).agg({"ConfirmedCovidCases": "mean", "Lat": "mean", "Long": "mean"})
+df_clean_mean = df_clean_mean.round({"ConfirmedCovidCases":0})
+print(df_clean_mean)
 
 
 # i description of dataframe
-print(df_clean.describe())
+print(df_clean_mean.describe())
 
 
-<<<<<<< HEAD
-# setting up map_fig
-map_fig = px.scatter_mapbox(df_clean.round({"ConfirmedCovidCases":0}), lat="Lat", lon="Long", color="CountyName", size="ConfirmedCovidCases", color_continuous_scale=px.colors.cyclical.IceFire, size_max=40, zoom=5.5)
-
-=======
 
 # setting up fig (map)
-fig = px.scatter_mapbox(df_clean.round({"ConfirmedCovidCases":0}), lat="Lat", lon="Long", color="CountyName", size="ConfirmedCovidCases", color_continuous_scale=px.colors.cyclical.IceFire, size_max=40, zoom=5.5)
->>>>>>> de34de6949e84833cdd3231dce2340fd3a0a9531
+fig = px.scatter_mapbox(df_clean_mean.round({"ConfirmedCovidCases":0}), lat="Lat", lon="Long", color="CountyName", size="ConfirmedCovidCases", color_continuous_scale=px.colors.cyclical.IceFire, size_max=40, zoom=5.5)
 #updating map mapbox_style
-fig.update_layout(mapbox_style="dark", mapbox_accesstoken=token, paper_bgcolor="#1a1a1a", font=dict(color="white"), showlegend=False, margin=dict(
+fig.update_layout(mapbox_style="dark", mapbox_accesstoken=token, plot_bgcolor="#1a1a1a",paper_bgcolor="#1a1a1a", font=dict(color="white"), showlegend=False, margin=dict(
         l=0,
         r=0,
         b=0,
@@ -55,13 +49,16 @@ fig.update_layout(mapbox_style="dark", mapbox_accesstoken=token, paper_bgcolor="
         pad=1
     ))
 
-<<<<<<< HEAD
-=======
 # setting up barFig
-barFig = px.bar(df_clean.round({"ConfirmedCovidCases":0}), x="CountyName", y="ConfirmedCovidCases", color="CountyName")
+barFig = px.bar(df_clean_mean.round({"ConfirmedCovidCases":0}), x="CountyName", y="ConfirmedCovidCases", color="CountyName")
 #updating barFig style
-barFig.update_layout(paper_bgcolor="#1a1a1a", font=dict(color="white"))
->>>>>>> de34de6949e84833cdd3231dce2340fd3a0a9531
+barFig.update_layout(plot_bgcolor="#1a1a1a",paper_bgcolor="#1a1a1a", font=dict(color="white"), showlegend=False, margin=dict(
+        l=0,
+        r=0,
+        b=0,
+        t=0,
+        pad=1
+    ))
 
 
 #init the dash app @/
@@ -99,7 +96,7 @@ app.layout = html.Div(style={
 
 
         html.Div(children=[
-            html.Label('Data Type',style={"color":"#ffffff"}),
+            html.Label('Bar Graph',style={"color":"#ffffff"}),
             html.Div(style={"backgroundColor":"#1a1a1a", "height":"100%"},children=
                 dcc.Graph(
                     id='bar-graph',
@@ -114,17 +111,6 @@ app.layout = html.Div(style={
 
 
         html.Div(children=[
-<<<<<<< HEAD
-            html.Label('Graph Type', style={"color":"#ffffff"}),
-            dcc.Dropdown(
-                options=[
-                    {'label': 'Country Map', 'value': 'country-map'},
-                    {'label': 'Bar Chart', 'value': 'bar-chart'},
-                    {"label": "Line Graph", "value": "line-graph"}
-                ],
-                value='country-map'
-            ),
-=======
             html.Label('Country Map', style={"color":"#ffffff"}),
             html.Div(style={"backgroundColor":"#1a1a1a", "height":"100%"},children=
                 dcc.Graph(
@@ -135,7 +121,6 @@ app.layout = html.Div(style={
                     "height": "100%",
                     })
                 )
->>>>>>> de34de6949e84833cdd3231dce2340fd3a0a9531
         ], className="six columns"),
 
 
@@ -151,33 +136,14 @@ app.layout = html.Div(style={
 
     dash_table.DataTable(
         id='table',
-        columns=[{"name": i, "id": i} for i in df_clean.columns],
-        data=df_clean.to_dict('records'))
+        columns=[{"name": i, "id": i} for i in df_clean_mean.columns],
+        data=df_clean_mean.to_dict('records'))
 
-<<<<<<< HEAD
-
-
-
-# implementing the graph
-    html.Div(style={"backgroundColor":"#1a1a1a"},children=
-        dcc.Graph(
-            id='example-graph',
-            figure=map_fig,
-            style={
-            "backgroundColor": "#1a1a1a",
-            "height": "100%",
-            })
-        )
-])
-
-
-=======
 ])
 
 
 
 
->>>>>>> de34de6949e84833cdd3231dce2340fd3a0a9531
 
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0",debug=True)
