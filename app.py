@@ -4,6 +4,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.express as px
 import pandas as pd
+from dash.dependencies import Input, Output
+import numpy as np
 
 #external stylesheet for plotly dash
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -34,7 +36,7 @@ df_clean_mean.rename(columns={"ConfirmedCovidCases": "Average Covid Cases", "Cou
 
 
 # cleaning to get total
-df_clean_total = df.groupby("CountyName", as_index=False).agg({"ConfirmedCovidCases": "sum"})
+df_clean_total = df.groupby("CountyName", as_index=False).agg({"ConfirmedCovidCases": "max"})
 df_clean_total.rename(columns={"ConfirmedCovidCases": "Total Covid Cases"}, inplace = True)
 
 
@@ -158,6 +160,7 @@ app.layout = html.Div(style={
                     style={
                     "backgroundColor": "#1a1a1a",
                     "height": "100%",
+
                     })
                 )
         ], className="six columns"),
@@ -205,19 +208,24 @@ app.layout = html.Div(style={
 
 #----------------------------------------------------------------------------------
 
-"""
+# callback to update graph math
 @app.callback(
     Output(component_id="bar-graph", component_property="figure"),
     [Input(component_id="math_dropdown", component_property="value")]
 )
 
+
 def update_bar_graph(math_dropdown):
-    dff = df
+    dff = clean_df
 
     barChart=px.bar(
-        #data_frame=
-    )
-"""
+            data_frame=dff,
+            y=math_dropdown,
+            x= "County Name",
+            color="County Name",
+
+        )
+    return(barChart)
 
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0",debug=True)
