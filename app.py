@@ -27,19 +27,35 @@ colors = {
 #reading and ingesting datafile
 df = pd.read_csv("https://raw.githubusercontent.com/eoinparkinson/covid-19-data-raw/master/covid-stats.csv", index_col=0)
 
-# i cleaning df
+# i cleaning df to df_clean_mean and df_clean_total
 df_clean_mean = df.groupby("CountyName", as_index=False).agg({"ConfirmedCovidCases": "mean", "Lat": "mean", "Long": "mean"})
-df_clean_mean = df_clean_mean.round({"ConfirmedCovidCases":0})
-print(df_clean_mean)
+#df_clean_mean = df_clean_mean.round({"ConfirmedCovidCases":0})
+df_clean_mean.rename(columns={"ConfirmedCovidCases": "Average Covid Cases", "CountyName": "County Name"}, inplace = True)
 
 
-# i description of dataframe
-print(df_clean_mean.describe())
+# cleaning to get total
+df_clean_total = df.groupby("CountyName", as_index=False).agg({"ConfirmedCovidCases": "sum"})
+df_clean_total.rename(columns={"ConfirmedCovidCases": "Total Covid Cases"}, inplace = True)
+
+
+
+
+
+
+
+# merging both clean dataframes
+clean_df = df_clean_mean
+clean_df.insert(2, "Total Covid Cases", df_clean_total["Total Covid Cases"])
+
+clean_df = clean_df.round({"Average Covid Cases":0, "Total Covid Cases":0})
+
+print(clean_df)
+
 
 
 
 # setting up fig (map)
-fig = px.scatter_mapbox(df_clean_mean.round({"ConfirmedCovidCases":0}), lat="Lat", lon="Long", color="CountyName", size="ConfirmedCovidCases", color_continuous_scale=px.colors.cyclical.IceFire, size_max=40, zoom=5.5)
+fig = px.scatter_mapbox(clean_df.round({"Average Covid Cases":0}), lat="Lat", lon="Long", color="County Name", size="Average Covid Cases", color_continuous_scale=px.colors.cyclical.IceFire, size_max=40, zoom=5.5)
 #updating map mapbox_style
 fig.update_layout(mapbox_style="dark", mapbox_accesstoken=token, plot_bgcolor="#1a1a1a",paper_bgcolor="#1a1a1a", font=dict(color="white"), showlegend=False, margin=dict(
         l=0,
@@ -50,8 +66,9 @@ fig.update_layout(mapbox_style="dark", mapbox_accesstoken=token, plot_bgcolor="#
     ))
 
 # setting up barFig
-barFig = px.bar(df_clean_mean.round({"ConfirmedCovidCases":0}), x="CountyName", y="ConfirmedCovidCases", color="CountyName")
+barFig = px.bar(clean_df.round({"Average Covid Cases":0}), x="County Name", y="Average Covid Cases", color="County Name")
 #updating barFig style
+
 barFig.update_layout(plot_bgcolor="#1a1a1a",paper_bgcolor="#1a1a1a", font=dict(color="white"), showlegend=False, margin=dict(
         l=0,
         r=0,
@@ -59,6 +76,8 @@ barFig.update_layout(plot_bgcolor="#1a1a1a",paper_bgcolor="#1a1a1a", font=dict(c
         t=0,
         pad=1
     ))
+
+
 
 
 #init the dash app @/
@@ -87,6 +106,41 @@ app.layout = html.Div(style={
         "textAlign": "right",
         "color": "#ffffff",
         "padding-right": "7px",
+    }),
+
+
+    html.Div(children=[
+
+        html.Div(children=[
+            dcc.Dropdown(
+            id="math_dropdown",
+            options=[
+                {"label": "Calculate Mean", "value": "Average Covid Cases"},
+                {"label": "Calculate Total", "value": "Total Covid Cases"},
+            ],
+            value="Average Covid Cases",
+            multi=False,
+            clearable=False
+
+            )
+        ], className="six columns"),
+
+
+
+        html.Div(children=[
+
+
+        ], className="six columns"),
+
+
+
+    ], className="row", style={
+
+        "padding-bottom": "25px",
+        "padding-left": "7px",
+        "padding-right": "7px",
+        "height": "100%",
+
     }),
 
 
@@ -134,16 +188,36 @@ app.layout = html.Div(style={
 
     }),
 
-    dash_table.DataTable(
-        id='table',
-        columns=[{"name": i, "id": i} for i in df_clean_mean.columns],
-        data=df_clean_mean.to_dict('records'))
+    html.Div(
+        dash_table.DataTable(
+            id='table',
+            columns=[{"name": i, "id": i} for i in clean_df.columns],
+            data=clean_df.to_dict('records')),
+
+        style={
+        "height":"fit",
+        "backgroundColor":"#ffffff",
+        }
+    ),
+
 
 ])
 
+#----------------------------------------------------------------------------------
 
+"""
+@app.callback(
+    Output(component_id="bar-graph", component_property="figure"),
+    [Input(component_id="math_dropdown", component_property="value")]
+)
 
+def update_bar_graph(math_dropdown):
+    dff = df
 
+    barChart=px.bar(
+        #data_frame=
+    )
+"""
 
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0",debug=True)
