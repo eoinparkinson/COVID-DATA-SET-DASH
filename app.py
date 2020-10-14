@@ -7,6 +7,7 @@ import pandas as pd
 from dash.dependencies import Input, Output
 import plotly.graph_objects as go
 
+
 #external stylesheet for plotly dash
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -26,7 +27,7 @@ colors = {
     "sub-text": "#ffffff"
 }
 
-#reading and ingesting datafile
+#reading and ingesting datafile 1
 df = pd.read_csv("https://raw.githubusercontent.com/eoinparkinson/covid-19-data-raw/master/covid-stats.csv", index_col=0)
 
 # i cleaning df to df_clean_mean and df_clean_total
@@ -50,7 +51,7 @@ print(clean_df)
 
 
 # setting up fig (map)
-fig = px.scatter_mapbox(clean_df.round({"Average Covid Cases":0}), lat="Lat", lon="Long", color="County Name", size="Average Covid Cases", color_continuous_scale=px.colors.cyclical.IceFire, size_max=40, zoom=5.5)
+fig = px.scatter_mapbox(clean_df.round({"Average Covid Cases":0}), lat="Lat", lon="Long", color="County Name", size="Average Covid Cases", color_continuous_scale=px.colors.cyclical.IceFire, size_max=40, zoom=5.5, hover_name="County Name")
 #updating map mapbox_style
 fig.update_layout(mapbox_style="dark", mapbox_accesstoken=token, plot_bgcolor="#1a1a1a",paper_bgcolor="#1a1a1a", font=dict(color="white"), showlegend=False, margin=dict(
         l=0,
@@ -61,7 +62,7 @@ fig.update_layout(mapbox_style="dark", mapbox_accesstoken=token, plot_bgcolor="#
     ))
 
 # setting up barFig
-barFig = px.bar(clean_df.round({"Average Covid Cases":0}), x="County Name", y="Average Covid Cases", color="County Name")
+barFig = px.bar(clean_df.round({"Average Covid Cases":0}), x="County Name", y="Average Covid Cases", color="County Name", hover_name="County Name")
 #updating barFig style
 
 barFig.update_layout(plot_bgcolor="#1a1a1a",paper_bgcolor="#1a1a1a", font=dict(color="white"), showlegend=False, margin=dict(
@@ -73,7 +74,16 @@ barFig.update_layout(plot_bgcolor="#1a1a1a",paper_bgcolor="#1a1a1a", font=dict(c
     ))
 
 
-
+# setting up dateFig
+scatterFig = px.line(df, x="TimeStamp", y="ConfirmedCovidCases", color="CountyName", line_group="CountyName", hover_name="CountyName", line_shape="spline", render_mode="svg")
+# updating scatterFig style
+scatterFig.update_layout(plot_bgcolor="#1a1a1a", paper_bgcolor="#1a1a1a", font=dict(color="white"), showlegend=False, xaxis = {"showgrid": False}, yaxis = {"showgrid": False}, margin=dict(
+        l=0,
+        r=0,
+        b=0,
+        t=0,
+        pad=1
+    ))
 
 
 #init the dash app @/
@@ -188,9 +198,15 @@ app.layout = html.Div(style={
     #adding the data slider graph
 
     html.Div(
-        "Have a nice little graph here",
-        style={
-        "font":"#ffffff"
+        dcc.Graph(
+            id="scatter-graph",
+            figure=scatterFig,
+            style={
+            "backgroundColor": "#1a1a1a",
+            }
+        ), style={
+        "height":"1500px",
+        "padding-bottom": "25px",
         }
     ),
 
