@@ -5,7 +5,7 @@ import dash_html_components as html
 import plotly.express as px
 import pandas as pd
 from dash.dependencies import Input, Output
-import numpy as np
+import plotly.graph_objects as go
 
 #external stylesheet for plotly dash
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -40,11 +40,6 @@ df_clean_total = df.groupby("CountyName", as_index=False).agg({"ConfirmedCovidCa
 df_clean_total.rename(columns={"ConfirmedCovidCases": "Total Covid Cases"}, inplace = True)
 
 
-
-
-
-
-
 # merging both clean dataframes
 clean_df = df_clean_mean
 clean_df.insert(2, "Total Covid Cases", df_clean_total["Total Covid Cases"])
@@ -52,8 +47,6 @@ clean_df.insert(2, "Total Covid Cases", df_clean_total["Total Covid Cases"])
 clean_df = clean_df.round({"Average Covid Cases":0, "Total Covid Cases":0})
 
 print(clean_df)
-
-
 
 
 # setting up fig (map)
@@ -78,6 +71,7 @@ barFig.update_layout(plot_bgcolor="#1a1a1a",paper_bgcolor="#1a1a1a", font=dict(c
         t=0,
         pad=1
     ))
+
 
 
 
@@ -147,10 +141,10 @@ app.layout = html.Div(style={
 
 
 
-
+    # Layout for graphs in responsive rows
     html.Div(children=[
 
-
+        # inserting the bar graph in a responsive div
         html.Div(children=[
             html.Label('Bar Graph',style={"color":"#ffffff"}),
             html.Div(style={"backgroundColor":"#1a1a1a", "height":"100%"},children=
@@ -166,7 +160,7 @@ app.layout = html.Div(style={
         ], className="six columns"),
 
 
-
+        # inserting the map graph in a responsive div
         html.Div(children=[
             html.Label('Country Map', style={"color":"#ffffff"}),
             html.Div(style={"backgroundColor":"#1a1a1a", "height":"100%"},children=
@@ -191,6 +185,16 @@ app.layout = html.Div(style={
 
     }),
 
+    #adding the data slider graph
+
+    html.Div(
+        "Have a nice little graph here",
+        style={
+        "font":"#ffffff"
+        }
+    ),
+
+    # adding the white data table seen at bottom of webpage
     html.Div(
         dash_table.DataTable(
             id='table',
@@ -214,7 +218,7 @@ app.layout = html.Div(style={
     [Input(component_id="math_dropdown", component_property="value")]
 )
 
-
+# function which changes the graph on dropdown change
 def update_bar_graph(math_dropdown):
     dff = clean_df
 
