@@ -203,10 +203,12 @@ app.layout = html.Div(style={
             figure=scatterFig,
             style={
             "backgroundColor": "#1a1a1a",
+            "height":"700px",
+            "padding-bottom": "75px",
             }
         ), style={
-        "height":"1500px",
-        "padding-bottom": "25px",
+        "height":"fit",
+        "backgroundColor": "#1a1a1a",
         }
     ),
 
@@ -215,14 +217,18 @@ app.layout = html.Div(style={
         dash_table.DataTable(
             id='table',
             columns=[{"name": i, "id": i} for i in clean_df.columns],
-            data=clean_df.to_dict('records')),
+            data=clean_df.to_dict('records'),
+            style_data = {
 
-        style={
-        "height":"fit",
-        "backgroundColor":"#ffffff",
+            }
+
+        ),
+
+        style = {
+            "padding-bottom":"150px",
         }
-    ),
 
+    ),
 
 ])
 
@@ -243,8 +249,17 @@ def update_bar_graph(math_dropdown):
             y=math_dropdown,
             x= "County Name",
             color="County Name",
-
         )
+
+    barChart.update_layout(plot_bgcolor="#1a1a1a", paper_bgcolor="#1a1a1a", font=dict(color="white"), showlegend=False, xaxis = {"showgrid": False}, yaxis = {"showgrid": False}, margin=dict(
+            l=0,
+            r=0,
+            b=0,
+            t=0,
+            pad=1
+        ))
+
+
     return(barChart)
 
 if __name__ == '__main__':
