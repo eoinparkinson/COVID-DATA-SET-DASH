@@ -74,16 +74,22 @@ barFig.update_layout(plot_bgcolor="#1a1a1a",paper_bgcolor="#1a1a1a", font=dict(c
     ))
 
 
-# setting up dateFig
-scatterFig = px.line(df, x="TimeStamp", y="ConfirmedCovidCases", color="CountyName", line_group="CountyName", hover_name="CountyName", line_shape="spline", render_mode="svg")
-# updating scatterFig style
-scatterFig.update_layout(plot_bgcolor="#1a1a1a", paper_bgcolor="#1a1a1a", font=dict(color="white"), showlegend=False, xaxis = {"showgrid": False}, yaxis = {"showgrid": False}, margin=dict(
+# setting up lineFig
+lineFig = px.line(df, x="TimeStamp", y="ConfirmedCovidCases", color="CountyName", line_group="CountyName", hover_name="CountyName", line_shape="spline", render_mode="svg")
+# updating lineFig style
+lineFig.update_layout(plot_bgcolor="#1a1a1a", paper_bgcolor="#1a1a1a", font=dict(color="white"), xaxis = {"showgrid": False}, yaxis = {"showgrid": False}, margin=dict(
         l=0,
         r=0,
         b=0,
         t=0,
         pad=1
     ))
+
+
+#added tempDf for clean data viewer at bottom of web page
+tempDf = clean_df
+tempDf = tempDf.drop(['Lat', 'Long'], axis=1)
+
 
 
 #init the dash app @/
@@ -197,35 +203,63 @@ app.layout = html.Div(style={
 
     #adding the data slider graph
 
-    html.Div(
+    html.Div(children=[
+
+        html.Label("Confirmed Covid Cases by Date", style={
+        "color":"#ffffff",
+        }),
+
         dcc.Graph(
             id="scatter-graph",
-            figure=scatterFig,
+            figure=lineFig,
             style={
             "backgroundColor": "#1a1a1a",
             "height":"700px",
             "padding-bottom": "75px",
             }
-        ), style={
+        )], style={
         "height":"fit",
         "backgroundColor": "#1a1a1a",
+        "padding-left":"7px",
+        "padding-right":"7px",
         }
     ),
 
     # adding the white data table seen at bottom of webpage
-    html.Div(
+    html.Div(children=[
+
+        html.H3("Clean Data", style = {
+        "backgroundColor": "#1a1a1a",
+        "textAlign":"center",
+        "color": colors["text"],
+        "font-weight": "bold",
+        }),
+
+
         dash_table.DataTable(
             id='table',
-            columns=[{"name": i, "id": i} for i in clean_df.columns],
-            data=clean_df.to_dict('records'),
+            columns=[{"name": i, "id": i} for i in tempDf.columns],
+            data=tempDf.to_dict('records'),
+            style_cell = {
+                "color":"#ffffff",
+                "backgroundColor":"#1a1a1a",
+                "textAlign":"left",
+                "padding-left":"5px",
+                "font-size":"20px",
+                "font-weight":"bold",
+            },
             style_data = {
-
+                "font-weight":"normal",
+                "font-size":"15px",
             }
 
-        ),
+        )],
 
         style = {
             "padding-bottom":"150px",
+            "padding-left":"7px",
+            "padding-right":"7px",
+            "backgroundColor":"#1a1a1a",
         }
 
     ),
