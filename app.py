@@ -43,10 +43,12 @@ df_clean_total.rename(columns={"ConfirmedCovidCases": "Total Covid Cases"}, inpl
 
 # merging both clean dataframes
 clean_df = df_clean_mean
+# inserting the column "Total Covid Cases" into clean_df
 clean_df.insert(2, "Total Covid Cases", df_clean_total["Total Covid Cases"])
-
+# rounding the decimal values from the math to 0 decimal places
 clean_df = clean_df.round({"Average Covid Cases":0, "Total Covid Cases":0})
 
+#printing the clean_df in terminal for testing purposes
 print(clean_df)
 
 
@@ -64,7 +66,6 @@ fig.update_layout(mapbox_style="dark", mapbox_accesstoken=token, plot_bgcolor="#
 # setting up barFig
 barFig = px.bar(clean_df.round({"Average Covid Cases":0}), x="County Name", y="Average Covid Cases", color="County Name", hover_name="County Name")
 #updating barFig style
-
 barFig.update_layout(plot_bgcolor="#1a1a1a",paper_bgcolor="#1a1a1a", font=dict(color="white"), showlegend=False, margin=dict(
         l=0,
         r=0,
@@ -86,8 +87,9 @@ lineFig.update_layout(plot_bgcolor="#1a1a1a", paper_bgcolor="#1a1a1a", font=dict
     ))
 
 
-#added tempDf for clean data viewer at bottom of web page
+#added tempDf for clean data table at bottom of web page
 tempDf = clean_df
+# dropping columns "Lat" & "long"
 tempDf = tempDf.drop(['Lat', 'Long'], axis=1)
 
 
@@ -105,7 +107,7 @@ app.layout = html.Div(style={
     # visual header div & title
     children=[
 
-
+    # h2 main title "Ireland Covid-19 Stats"
     html.H2(children="Ireland Covid-19 Stats",
     style={
         "textAlign": "center",
@@ -113,17 +115,18 @@ app.layout = html.Div(style={
         "font-weight": "bold",
         "padding-top": "12px",
     }),
-
+    # h6 subtitle
     html.H6(children="by Eoin Parkinson",style={
         "textAlign": "right",
         "color": "#ffffff",
         "padding-right": "7px",
     }),
 
-
+    # dropdown parent div
     html.Div(children=[
 
         html.Div(children=[
+            # math dropdown "Calculate Mean, Calculate Total"
             dcc.Dropdown(
             id="math_dropdown",
             options=[
@@ -138,13 +141,10 @@ app.layout = html.Div(style={
         ], className="six columns"),
 
 
-
+        # empty six column div (right of math dropdown)
         html.Div(children=[
 
-
         ], className="six columns"),
-
-
 
     ], className="row", style={
 
@@ -164,6 +164,7 @@ app.layout = html.Div(style={
         html.Div(children=[
             html.Label('Bar Graph',style={"color":"#ffffff"}),
             html.Div(style={"backgroundColor":"#1a1a1a", "height":"100%"},children=
+                # implementing the responsive bar graph with dropdown callback (on the left)
                 dcc.Graph(
                     id='bar-graph',
                     figure=barFig,
@@ -180,6 +181,7 @@ app.layout = html.Div(style={
         html.Div(children=[
             html.Label('Country Map', style={"color":"#ffffff"}),
             html.Div(style={"backgroundColor":"#1a1a1a", "height":"100%"},children=
+                # implementing the map graph (on the right)
                 dcc.Graph(
                     id='map-graph',
                     figure=fig,
@@ -201,16 +203,14 @@ app.layout = html.Div(style={
 
     }),
 
-    #adding the data slider graph
-
     html.Div(children=[
-
+        # basic label saying "Confirmed Covid Cases by Date"
         html.Label("Confirmed Covid Cases by Date", style={
         "color":"#ffffff",
         }),
-
+        # scatter lineFig
         dcc.Graph(
-            id="scatter-graph",
+            id="line-graph",
             figure=lineFig,
             style={
             "backgroundColor": "#1a1a1a",
@@ -227,7 +227,7 @@ app.layout = html.Div(style={
 
     # adding the white data table seen at bottom of webpage
     html.Div(children=[
-
+        # basic title "Clean Data"
         html.H3("Clean Data", style = {
         "backgroundColor": "#1a1a1a",
         "textAlign":"center",
@@ -235,7 +235,7 @@ app.layout = html.Div(style={
         "font-weight": "bold",
         }),
 
-
+        # implementing table at bottom of webpage
         dash_table.DataTable(
             id='table',
             columns=[{"name": i, "id": i} for i in tempDf.columns],
@@ -277,14 +277,14 @@ app.layout = html.Div(style={
 # function which changes the graph on dropdown change
 def update_bar_graph(math_dropdown):
     dff = clean_df
-
+    # defining the bar chart for callback
     barChart=px.bar(
             data_frame=dff,
             y=math_dropdown,
             x= "County Name",
             color="County Name",
         )
-
+    # updating bar layout for callback
     barChart.update_layout(plot_bgcolor="#1a1a1a", paper_bgcolor="#1a1a1a", font=dict(color="white"), showlegend=False, xaxis = {"showgrid": False}, yaxis = {"showgrid": False}, margin=dict(
             l=0,
             r=0,
@@ -295,6 +295,6 @@ def update_bar_graph(math_dropdown):
 
 
     return(barChart)
-
+# run the development server
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0",debug=True)
