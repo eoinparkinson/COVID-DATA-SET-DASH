@@ -51,7 +51,7 @@ print(clean_df)
 
 
 # setting up fig (map)
-fig = px.scatter_mapbox(clean_df.round({"Average Covid Cases":0}), lat="Lat", lon="Long", color="County Name", size="Average Covid Cases", color_continuous_scale=px.colors.cyclical.IceFire, size_max=40, zoom=5.5, hover_name="County Name")
+fig = px.scatter_mapbox(clean_df.round({"Average Covid Cases":0}), lat="Lat", lon="Long", color="County Name", size="Average Covid Cases", color_continuous_scale=px.colors.cyclical.IceFire, size_max=40, zoom=5.5, hover_name="County Name", hover_data=['Average Covid Cases'])
 #updating map mapbox_style
 fig.update_layout(mapbox_style="dark", mapbox_accesstoken=token, plot_bgcolor="#1a1a1a",paper_bgcolor="#1a1a1a", font=dict(color="white"), showlegend=False, margin=dict(
         l=0,
