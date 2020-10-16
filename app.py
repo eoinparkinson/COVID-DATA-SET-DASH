@@ -20,7 +20,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets,
         {"name": "viewport", "content": "width=device-width, height=device-height, initial-scale=1, maximum-scale=1.0, user-scalable=no"}
     ])
 
-# defining some proppa shwanky colours
+# defining some cool colours
 colors = {
     "background": "#1a1a1a",
     "text": "#FFD23F",
