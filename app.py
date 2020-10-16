@@ -5,7 +5,7 @@ import dash_html_components as html
 import plotly.express as px
 import pandas as pd
 from dash.dependencies import Input, Output
-import plotly.graph_objects as go
+
 
 
 #external stylesheet for plotly dash
