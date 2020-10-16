@@ -30,7 +30,7 @@ colors = {
 #reading and ingesting datafile 1
 df = pd.read_csv("https://raw.githubusercontent.com/eoinparkinson/covid-19-data-raw/master/covid-stats.csv", index_col=0)
 
-# i cleaning df to df_clean_temp and df_clean_total
+# cleaning df to df_clean_temp and df_clean_total
 df_clean_temp = df.groupby("CountyName", as_index=False).agg({"ConfirmedCovidCases": "mean", "Lat": "mean", "Long": "mean"})
 df_clean_temp.rename(columns={"ConfirmedCovidCases": "Average Covid Cases", "CountyName": "County Name"}, inplace = True)
 
@@ -86,7 +86,7 @@ lineFig.update_layout(plot_bgcolor="#1a1a1a", paper_bgcolor="#1a1a1a", font=dict
     ))
 
 
-#added tempDf for clean data table at bottom of web page
+# added tempDf for clean data table at bottom of web page
 tempDf = clean_df
 # dropping columns "Lat" & "long"
 tempDf = tempDf.drop(['Lat', 'Long'], axis=1)
@@ -278,9 +278,9 @@ def update_bar_graph(math_dropdown):
     dff = clean_df
     # defining the bar chart for callback
     barChart=px.bar(
-            data_frame=dff,
-            y=math_dropdown,
-            x= "County Name",
+            data_frame = dff,
+            y = math_dropdown,
+            x = "County Name",
             color="County Name",
         )
     # updating bar layout for callback
