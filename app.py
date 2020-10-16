@@ -30,10 +30,9 @@ colors = {
 #reading and ingesting datafile 1
 df = pd.read_csv("https://raw.githubusercontent.com/eoinparkinson/covid-19-data-raw/master/covid-stats.csv", index_col=0)
 
-# i cleaning df to df_clean_mean and df_clean_total
-df_clean_mean = df.groupby("CountyName", as_index=False).agg({"ConfirmedCovidCases": "mean", "Lat": "mean", "Long": "mean"})
-#df_clean_mean = df_clean_mean.round({"ConfirmedCovidCases":0})
-df_clean_mean.rename(columns={"ConfirmedCovidCases": "Average Covid Cases", "CountyName": "County Name"}, inplace = True)
+# i cleaning df to df_clean_temp and df_clean_total
+df_clean_temp = df.groupby("CountyName", as_index=False).agg({"ConfirmedCovidCases": "mean", "Lat": "mean", "Long": "mean"})
+df_clean_temp.rename(columns={"ConfirmedCovidCases": "Average Covid Cases", "CountyName": "County Name"}, inplace = True)
 
 
 # cleaning to get total
@@ -42,7 +41,7 @@ df_clean_total.rename(columns={"ConfirmedCovidCases": "Total Covid Cases"}, inpl
 
 
 # merging both clean dataframes
-clean_df = df_clean_mean
+clean_df = df_clean_temp
 # inserting the column "Total Covid Cases" into clean_df
 clean_df.insert(2, "Total Covid Cases", df_clean_total["Total Covid Cases"])
 # rounding the decimal values from the math to 0 decimal places
